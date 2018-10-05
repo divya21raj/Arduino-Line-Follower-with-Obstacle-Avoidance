@@ -4,8 +4,10 @@ int left1 = 4, left2 = 13, right1 = 7, right2 = 8, enable1 = 3, enable2 = 10;
 int x, y, z, frontSensor;
 int xO = 1, yO = 0, zO = 1;
 
-int speedR = 160, speedL = 146;
-int speedRH = 120, speedLH = 107;
+int counter = 1;
+
+int speedR = 145, speedL = 131;
+int speedRH = 85, speedLH = 72;
 float rs = speedR, ls = speedL;
 
 bool isTurning;
@@ -133,11 +135,35 @@ void followArc() {
 
   int x, y, z;
   // Make it rotate
-  analogWrite(enable2, 253);
-  analogWrite(enable1, 0);
-  delay(400);
+  if(counter == 1){
+    analogWrite(enable2, 205);
+    analogWrite(enable1, 0);
+    delay(450);
+  }else if(counter == 2){
+    analogWrite(enable2, 205);
+    analogWrite(enable1, 0);
+    delay(450);
+  }else if(counter == 3){
+    analogWrite(enable2, 240);
+    analogWrite(enable1, 0);
+    delay(400);
+  }
 
-  int r = 12;
+  if(counter != 3){    
+    while(!(x == 1 && y == 1 && z == 1)){
+      x = digitalRead(A2);
+      y = digitalRead(A1);
+      z = digitalRead(A0);
+  
+      analogWrite(enable2, rs);
+      analogWrite(enable1, ls);
+    }
+  }
+  
+  int r = 11;
+
+  if(counter == 2)
+    r =8;
 
   //float r =60;
   rs = 52.3 * (log(r)), ls = 254;
@@ -147,15 +173,41 @@ void followArc() {
     y = digitalRead(A1);
     z = digitalRead(A0);
 
-    analogWrite(enable2, rs);
-    analogWrite(enable1, ls);
+    analogWrite(enable2, rs-15);
+    analogWrite(enable1, ls-18);
   }while(x == 1 && y == 1 && z == 1);
 
   isTurning = false;
-  
-  analogWrite(enable2, 253);
+
+  analogWrite(enable2, 0);
+  analogWrite(enable1, 20);
+  delay(300);
+
+  if(counter == 2){
+    do{
+      x = digitalRead(A2);
+      y = digitalRead(A1);
+      z = digitalRead(A0);
+      
+      analogWrite(enable1, 0);
+      analogWrite(enable2, 80); 
+    }while(!(x == 1 && y == 0 && z == 1));  
+  }else if(counter == 3){
+    analogWrite(enable2,220);
+    analogWrite(enable1, 0);
+    delay(450);
+  }else{
+    analogWrite(enable2,220);
+    analogWrite(enable1, 0);
+    delay(400);
+  }
+
+  analogWrite(enable2, 0);
   analogWrite(enable1, 0);
-  delay(450);
+  delay(500);
+
+  counter = counter + 1;
+
 }
   
 
